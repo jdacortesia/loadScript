@@ -386,7 +386,7 @@ async function runWithConfig(config, logCallback) {
     const browser = await puppeteer.launch({
         headless,
         defaultViewport: null,
-        args: ['--start-maximized']
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--start-maximized']
     });
 
     const [page] = await browser.pages();

@@ -5,7 +5,7 @@ const fs = require('fs');
 const { runWithConfig } = require('./uploadOfertas');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Setup storage for uploaded files
 const storage = multer.diskStorage({
@@ -55,7 +55,7 @@ app.post('/run-upload', upload.single('dataFile'), async (req, res) => {
         contactoOverride: contacto,
         dataFilePath: dataFile.path,
         dryRun: dryRun === 'true',
-        headless: false // Keep it false so the user can see it
+        headless: true
     };
 
     logQueue.push('Starting process from frontend...');
