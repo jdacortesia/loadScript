@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const browser = await puppeteer.launch({ headless: true });
 const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
