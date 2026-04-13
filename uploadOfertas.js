@@ -1,11 +1,12 @@
 const puppeteer = require('puppeteer');
 const browser = await puppeteer.launch({
-  headless: true, 
+  // Use the env variable if it exists, otherwise default (for local dev)
+  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
+  headless: true,
   args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
     '--disable-dev-shm-usage',
-    '--single-process'
   ],
 });
 const XLSX = require('xlsx');
