@@ -386,6 +386,7 @@ async function runWithConfig(config, logCallback) {
     const browser = await puppeteer.launch({
         headless,
         defaultViewport: null,
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--start-maximized']
     });
 
