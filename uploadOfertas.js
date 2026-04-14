@@ -1,14 +1,4 @@
-import puppeteer from puppeteer;
-const browser = await puppeteer.launch({
-  // Use the env variable if it exists, otherwise default (for local dev)
-  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
-  headless: true,
-  args: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-  ],
-});
+const puppeteer = require('puppeteer');
 const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
@@ -396,7 +386,7 @@ async function runWithConfig(config, logCallback) {
     const browser = await puppeteer.launch({
         headless,
         defaultViewport: null,
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--start-maximized']
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--start-maximized']
     });
 
     const [page] = await browser.pages();
