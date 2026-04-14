@@ -2,6 +2,13 @@ const puppeteer = require('puppeteer');
 const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
+function getChromiumPath() {
+    if (process.env.PUPPETEER_EXECUTABLE_PATH) return process.env.PUPPETEER_EXECUTABLE_PATH;
+    try { return execSync('which chromium').toString().trim(); } catch (_) {}
+    try { return execSync('which chromium-browser').toString().trim(); } catch (_) {}
+    return null;
+}
 
 /**
  * Reads data from Excel/CSV.
@@ -386,7 +393,7 @@ async function runWithConfig(config, logCallback) {
     const browser = await puppeteer.launch({
         headless,
         defaultViewport: null,
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
+        executablePath: getChromiumPath(),
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--start-maximized']
     });
 
