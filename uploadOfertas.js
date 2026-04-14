@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+import puppeteer from puppeteer;
 const browser = await puppeteer.launch({
   // Use the env variable if it exists, otherwise default (for local dev)
   executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,

@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { runWithConfig } = require('./uploadOfertas');
+const { runWithConfig } = require('./uploadOfertas.js');
 
 const app = express();
 const port = process.env.PORT || 3000;
