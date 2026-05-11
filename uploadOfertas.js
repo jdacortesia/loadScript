@@ -273,51 +273,55 @@ async function customSelect2Option(ctx, selectId, value) {
  * Skips silently if value is empty.
  */
 async function customSelect2Tag(ctx, value) {
-    const text = (value !== undefined && value !== null) ? `${value}`.trim() : '';
-    if (!text) return;
+    const raw = (value !== undefined && value !== null) ? `${value}`.trim() : '';
+    if (!raw) return;
+
+    const names = raw.split(',').map(s => s.trim()).filter(Boolean);
 
     try {
         await ctx.waitForSelector('.select2-selection__rendered', { timeout: 8000 });
 
-        // Step 1: Remove every existing tag
+        // Remove every existing tag
         await ctx.evaluate(() => {
             document.querySelectorAll('.select2-selection__choice__remove')
                 .forEach(btn => btn.click());
         });
         await new Promise(r => setTimeout(r, 200));
 
-        // Step 2: Click the Select2 selection area to open the search input
-        await ctx.evaluate(() => {
-            const el = document.querySelector('.select2-selection__rendered');
-            if (el) el.click();
-        });
-        await new Promise(r => setTimeout(r, 400));
+        for (const name of names) {
+            // Click the Select2 selection area to open the search input
+            await ctx.evaluate(() => {
+                const el = document.querySelector('.select2-selection__rendered');
+                if (el) el.click();
+            });
+            await new Promise(r => setTimeout(r, 400));
 
-        // Step 3: Set value on the search input Select2 injects after click
-        const inputFound = await ctx.evaluate((val) => {
-            const input = document.querySelector('.select2-search__field');
-            if (!input) return false;
-            const nativeSetter = Object.getOwnPropertyDescriptor(
-                window.HTMLInputElement.prototype, 'value'
-            ).set;
-            nativeSetter.call(input, val);
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            return true;
-        }, text);
+            // Set value on the search input Select2 injects after click
+            const inputFound = await ctx.evaluate((val) => {
+                const input = document.querySelector('.select2-search__field');
+                if (!input) return false;
+                const nativeSetter = Object.getOwnPropertyDescriptor(
+                    window.HTMLInputElement.prototype, 'value'
+                ).set;
+                nativeSetter.call(input, val);
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                return true;
+            }, name);
 
-        if (!inputFound) throw new Error('Select2 search input not visible after click');
-        await new Promise(r => setTimeout(r, 300));
+            if (!inputFound) throw new Error(`Select2 search input not visible for tag "${name}"`);
+            await new Promise(r => setTimeout(r, 300));
 
-        // Step 4: Fire Enter keydown so Select2 adds the tag
-        await ctx.evaluate(() => {
-            const input = document.querySelector('.select2-search__field');
-            if (input) {
-                input.dispatchEvent(new KeyboardEvent('keydown', {
-                    key: 'Enter', keyCode: 13, which: 13, bubbles: true
-                }));
-            }
-        });
-        await new Promise(r => setTimeout(r, 200));
+            // Fire Enter keydown so Select2 adds the tag
+            await ctx.evaluate(() => {
+                const input = document.querySelector('.select2-search__field');
+                if (input) {
+                    input.dispatchEvent(new KeyboardEvent('keydown', {
+                        key: 'Enter', keyCode: 13, which: 13, bubbles: true
+                    }));
+                }
+            });
+            await new Promise(r => setTimeout(r, 300));
+        }
 
     } catch (e) {
         throw new Error(`Select2 Tag Error [contacto]: ${e.message}`);
